@@ -1,0 +1,23 @@
+# macOS
+.DS_Store
+
+# ESP-IDF
+build/
+managed_components/
+sdkconfig
+sdkconfig.old
+.dependencies.lock
+
+# CMake
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+compile_commands.json
+
+# IDE
+.vscode/
+.idea/
+
+# Logs and temporary
+*.log
+*.tmp

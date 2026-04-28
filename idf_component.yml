@@ -1,0 +1,7 @@
+version: "1.0.0"
+description: "Lightweight scheduling library for ESP-IDF with sunrise/sunset and NVS persistence"
+url: "https://github.com/MacWyznawca/JkkSchedule"
+license: "Apache-2.0"
+dependencies:
+  idf:
+    version: ">=5.5"
