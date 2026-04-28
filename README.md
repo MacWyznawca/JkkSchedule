@@ -78,10 +78,18 @@ if (sched) {
 See:
 - [examples/esp-idf/basic](examples/esp-idf/basic)
 - [examples/esp-idf/sun_events](examples/esp-idf/sun_events)
+- [examples/arduino/basic_not_tested](examples/arduino/basic_not_tested)
 
 ## Arduino Compatibility
 
 The library is designed for ESP-IDF components.
+
+An experimental Arduino example is included in:
+- [examples/arduino/basic_not_tested](examples/arduino/basic_not_tested)
+
+Status:
+- not tested
+- provided as a starting point only
 
 It can be used from Arduino only under these conditions:
 - target platform is ESP32 (Arduino-ESP32)
@@ -93,6 +101,10 @@ For plain Arduino Library Manager style usage (without ESP-IDF component model),
 - `esp_err.h`
 - FreeRTOS timers
 - ESP-IDF NVS API
+
+The repository now also provides:
+- `library.properties`
+- `src/JkkSchedule.h` forwarding header for Arduino-style include discovery
 
 ## Repository Layout
 
