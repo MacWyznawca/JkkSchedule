@@ -411,6 +411,7 @@ static uint32_t jkk_schedule_get_next_schedule_time_diff(const char *schedule_na
                 return sun < hours ? sun : hours;
             }
         }
+        break;
         case JKK_SCHEDULE_TYPE_DATE_SUNSET:{
             if(trigger->hours < 24 && trigger->minutes < 60){
                 if (!jkk_schedule_geo_is_valid(latitude_e5, longitude_e5)) {
