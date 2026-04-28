@@ -1,18 +1,28 @@
-# Arduino Example
+# Arduino Examples
 
-This folder contains an experimental Arduino example for ESP32.
+This folder contains experimental Arduino-related examples for ESP32.
 
-Status:
-- not tested
-- provided as a starting point only
+**Status: NOT TESTED** — provided as starting points only.
 
-Assumptions:
-- Arduino core for ESP32
-- NVS is available
-- standard time / SNTP support is available
-- library is added manually from this repository
+## Examples
+
+### `basic_not_tested/`
+
+Plain Arduino IDE / PlatformIO (Arduino framework) usage.
+Adds JkkSchedule as a library manually.
+This path may require extra work because NVS and FreeRTOS timer APIs must
+come from the Arduino core and may not be fully exposed.
+
+### `arduino_as_idf_component_not_tested/`
+
+**Recommended Arduino-compatible path.**
+Builds with `idf.py` (ESP-IDF build system); arduino-esp32 is added as a
+regular ESP-IDF component. Full ESP-IDF APIs (NVS, FreeRTOS timers) are
+available natively, so JkkSchedule is expected to work without extra glue.
+See the subfolder `README.md` for step-by-step instructions.
+
+---
 
 Important:
 - JkkSchedule is primarily an ESP-IDF library
-- Arduino support is best treated as experimental
-- if you use Arduino as an ESP-IDF component, that path is expected to be more reliable than plain Arduino IDE usage
+- Arduino support is experimental in both variants

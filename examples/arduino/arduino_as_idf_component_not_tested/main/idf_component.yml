@@ -1,0 +1,8 @@
+##
+## Declare JkkSchedule as a managed component dependency.
+## Remove this file (and the managed_components/ folder) if you prefer to keep
+## JkkSchedule as a plain git-cloned component in components/.
+##
+dependencies:
+  MacWyznawca__JkkSchedule:
+    version: ">=1.0.0"
