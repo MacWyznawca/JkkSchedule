@@ -26,7 +26,7 @@ Apache License 2.0. See [LICENSE](LICENSE).
 
 ## Requirements
 
-- ESP-IDF 5.5, 5.6, 6.0 (tested target range)
+- ESP-IDF 5.5, 6.0 (tested target range)
 - FreeRTOS (provided by ESP-IDF)
 - NVS (`nvs_flash` component)
 
