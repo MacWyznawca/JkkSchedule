@@ -1,6 +1,6 @@
 # ESP-IDF Examples
 
-Tested with ESP-IDF 5.5, 5.6 and 6.0.
+Tested with ESP-IDF 5.5 and 6.0.
 
 ## Build Basic Example
 

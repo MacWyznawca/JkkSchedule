@@ -14,7 +14,7 @@ jobs:
 
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4
+        uses: actions/checkout@v5
         with:
           submodules: recursive
 
@@ -23,6 +23,14 @@ jobs:
           if [ -z "${{ vars.ESP_COMPONENT_NAMESPACE }}" ]; then
             echo "Repository variable ESP_COMPONENT_NAMESPACE is not set."
             echo "Set it to your ESP Component Registry namespace before using this workflow."
+            exit 1
+          fi
+
+      - name: Check API token configuration
+        run: |
+          if [ -z "${{ secrets.IDF_COMPONENT_API_TOKEN }}" ]; then
+            echo "Repository secret IDF_COMPONENT_API_TOKEN is not set."
+            echo "Add a token with at least 'write:components' scope in Settings -> Secrets and variables -> Actions."
             exit 1
           fi
 

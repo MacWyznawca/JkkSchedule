@@ -1117,11 +1117,3 @@ esp_err_t jkk_schedule_run_all(jkk_schedules_handle_t *schedules_h, bool runMiss
     return ESP_OK;
 }
 
-/*
-time(&now);
-if(now > JKK_ERA)
-
-char key[16] = {0};
-sprintf(key, "LuSv%lX-%X", _ls->luID, 0);
-*/
-
