@@ -4,5 +4,5 @@
 ## JkkSchedule as a plain git-cloned component in components/.
 ##
 dependencies:
-  MacWyznawca__JkkSchedule:
+  MacWyznawca/JkkSchedule:
     version: ">=1.0.0"

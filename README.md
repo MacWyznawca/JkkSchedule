@@ -2,6 +2,8 @@
 
 JkkSchedule is a lightweight schedule library for ESP32 and ESP-IDF projects.
 
+It is packaged as a reusable ESP-IDF component and can be published through the ESP Component Registry.
+
 It supports:
 - day-of-week schedules
 - date schedules
@@ -32,6 +34,21 @@ Apache License 2.0. See [LICENSE](LICENSE).
 
 ## Installation (ESP-IDF Component)
 
+From the ESP Component Registry:
+
+```yaml
+dependencies:
+    MacWyznawca/JkkSchedule: "^1.0.0"
+```
+
+Or with the CLI:
+
+```bash
+idf.py add-dependency "MacWyznawca/JkkSchedule^1.0.0"
+```
+
+Manual options:
+
 Copy this repository as a component:
 - `components/JkkSchedule`
 
@@ -42,6 +59,30 @@ In your project source:
 ```c
 #include "JkkSchedule.h"
 ```
+
+## Publishing Releases
+
+Manual publish from a local ESP-IDF shell:
+
+```bash
+esp6
+cd /Users/jkk/Documents/JkkSchedule
+compote component upload --name JkkSchedule
+```
+
+Recommended release flow:
+
+1. Update `version` in `idf_component.yml`
+2. Commit the release
+3. Create a matching git tag, for example `v1.0.1`
+4. Push branch and tag to GitHub
+
+This repository also includes a GitHub Actions workflow for automatic upload on pushed `v*` tags.
+To enable it:
+
+- set repository variable `ESP_COMPONENT_NAMESPACE`
+- optionally set secret `IDF_COMPONENT_API_TOKEN`
+- or configure OIDC trusted uploader in the ESP Component Registry for this repository and workflow file
 
 ## Quick Start
 

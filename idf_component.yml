@@ -1,7 +1,18 @@
 version: "1.0.0"
-description: "Lightweight scheduling library for ESP-IDF with sunrise/sunset and NVS persistence"
+description: "Scheduling library for ESP-IDF with clock, date, interval, and sunrise/sunset triggers plus NVS persistence"
 url: "https://github.com/MacWyznawca/JkkSchedule"
 license: "Apache-2.0"
+maintainers:
+  - "Jaromir Kopp <qart@me.com>"
+tags:
+  - scheduler
+  - schedule
+  - sunrise
+  - sunset
+  - nvs
+  - freertos
+  - esp32
+  - esp-idf
 dependencies:
   idf:
     version: ">=5.5"

@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+# Registry upload artifacts
+dist/
+
 # ESP-IDF
 build/
 managed_components/

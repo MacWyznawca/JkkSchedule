@@ -1,0 +1,34 @@
+name: Publish JkkSchedule
+
+on:
+  push:
+    tags:
+      - "v*"
+
+jobs:
+  upload_component:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+
+      - name: Check registry namespace configuration
+        run: |
+          if [ -z "${{ vars.ESP_COMPONENT_NAMESPACE }}" ]; then
+            echo "Repository variable ESP_COMPONENT_NAMESPACE is not set."
+            echo "Set it to your ESP Component Registry namespace before using this workflow."
+            exit 1
+          fi
+
+      - name: Upload component to the ESP Component Registry
+        uses: espressif/upload-components-ci-action@v2
+        with:
+          components: "JkkSchedule:."
+          namespace: ${{ vars.ESP_COMPONENT_NAMESPACE }}
+          api_token: ${{ secrets.IDF_COMPONENT_API_TOKEN }}
