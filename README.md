@@ -114,6 +114,37 @@ if (sched) {
 - Sunrise/sunset modes use coordinates from manager handle.
 - If coordinates are invalid, sunrise/sunset scheduling falls back to fixed hour/minute behavior.
 
+## Sunrise/Sunset with Time Boundary
+
+The `SUNRISE` and `SUNSET` schedule types support an optional **time boundary**. It is activated by setting valid `hours` (0–23) and `minutes` (0–59) fields in the trigger configuration. When both fields are out of range (default), the schedule fires purely at the astronomical time.
+
+**Selection rule:**
+
+| Type | Behaviour with boundary | Effect |
+|---|---|---|
+| `SUNRISE` | `min(sunrise, hours:minutes)` | No later than the given time |
+| `SUNSET` | `max(sunset, hours:minutes)` | No earlier than the given time |
+
+**Example — winter evenings:**
+To prevent home lighting from switching to warm-white mode too early in winter (when sunset can be as early as 15:30), set type `SUNSET` with boundary `18:00`. The schedule fires at 18:00 in winter and at sunset in summer (when sunset is after 18:00):
+
+```c
+jkk_schedule_config_t cfg = {
+    .name = "evening_warm_white",
+    .trigger = {
+        .type    = JKK_SCHEDULE_TYPE_DAYS_OF_WEEK_SUNSET,
+        .hours   = 18,   // no earlier than 18:00
+        .minutes = 0,
+        .day.repeat_days = JKK_SCHEDULE_DAY_EVERYDAY,
+    },
+    .trigger_cb = evening_cb,
+};
+```
+
+**Analogously for SUNRISE** — `hours:minutes` acts as an upper limit (e.g. "wake-up no later than 07:30, even if sunrise is later in winter").
+
+> If the geographic coordinates are not set or are invalid, the library uses only the fixed time — `hours:minutes` then behaves as a standard time-of-day trigger.
+
 ## Examples
 
 See:
