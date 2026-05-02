@@ -1,4 +1,4 @@
-version: "1.0.4"
+version: "1.0.5"
 description: "Scheduling library for ESP-IDF with clock, date, interval, and sunrise/sunset triggers plus NVS persistence"
 url: "https://github.com/MacWyznawca/JkkSchedule"
 license: "Apache-2.0"
