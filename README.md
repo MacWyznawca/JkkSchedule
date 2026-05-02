@@ -60,30 +60,6 @@ In your project source:
 #include "JkkSchedule.h"
 ```
 
-## Publishing Releases
-
-Manual publish from a local ESP-IDF shell:
-
-```bash
-esp6
-cd /Users/jkk/Documents/JkkSchedule
-compote component upload --name JkkSchedule
-```
-
-Recommended release flow:
-
-1. Update `version` in `idf_component.yml`
-2. Commit the release
-3. Create a matching git tag, for example `v1.0.1`
-4. Push branch and tag to GitHub
-
-This repository also includes a GitHub Actions workflow for automatic upload on pushed `v*` tags.
-To enable it:
-
-- set repository variable `ESP_COMPONENT_NAMESPACE`
-- optionally set secret `IDF_COMPONENT_API_TOKEN`
-- or configure OIDC trusted uploader in the ESP Component Registry for this repository and workflow file
-
 ## Quick Start
 
 ```c
