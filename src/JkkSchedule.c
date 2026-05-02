@@ -346,7 +346,13 @@ static uint32_t jkk_schedule_get_next_time_diff(const char *schedule_name, jkk_s
             schedule_time.tm_sec = 0;
         }
         ESP_LOGE(TAG, "Sunset: %d, %02d.%02d, %d", sun, sun / 60, sun - ((sun / 60) * 60), trigger->relative_seconds);
-        if(no_of_days == 0 && (current_time->tm_hour * 60 + current_time->tm_min) > sun){
+        /* Compare against effective trigger time (sun ± relative_seconds), not just raw sun time.
+         * Without this, a negative relative_seconds offset (e.g. -900 for "15 min before sunrise")
+         * would cause a negative time_diff when the schedule is evaluated after the effective trigger
+         * time but before actual sunrise, making the fallback fixed-time fire instead. */
+        int _eff_sec = (int)sun * 60 + trigger->relative_seconds;
+        int _cur_sec = current_time->tm_hour * 3600 + current_time->tm_min * 60 + current_time->tm_sec;
+        if(no_of_days == 0 && _cur_sec >= _eff_sec){
             schedule_time.tm_sec += 1 * SECONDS_IN_DAY;
         }
     }
