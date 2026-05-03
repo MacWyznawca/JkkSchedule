@@ -391,6 +391,9 @@ static uint32_t jkk_schedule_get_next_schedule_time_diff(const char *schedule_na
                 sun = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, false, latitude_e5, longitude_e5);
                 hours = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
             //    printf("SUNRISE sun < hours: %d Sun: %ld, hours: %ld %s\n", sun < hours, sun, hours, schedule_name);
+                /* If the sun event is more than 12 h away (next day), but the fixed boundary
+                 * is sooner (today), skip the boundary — it already fired for today. */
+                if(sun > (uint32_t)(12 * 3600) && hours < sun) return sun;
                 return sun < hours ? sun : hours;
             }
         }
@@ -403,6 +406,9 @@ static uint32_t jkk_schedule_get_next_schedule_time_diff(const char *schedule_na
                 sun = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, false, latitude_e5, longitude_e5);
                 hours = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
             //    printf("SUNSET sun > hours: %d Sun: %ld, hours: %ld %s\n", sun > hours, sun, hours, schedule_name);
+                /* If the sun event is more than 12 h away (next day), but the fixed boundary
+                 * is sooner (today), skip the boundary — it already fired for today. */
+                if(sun > (uint32_t)(12 * 3600) && hours < sun) return sun;
                 return sun > hours ? sun : hours;
             }
         }
@@ -414,6 +420,7 @@ static uint32_t jkk_schedule_get_next_schedule_time_diff(const char *schedule_na
                 }
                 sun = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, false, latitude_e5, longitude_e5);
                 hours = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
+                if(sun > (uint32_t)(12 * 3600) && hours < sun) return sun;
                 return sun < hours ? sun : hours;
             }
         }
@@ -425,6 +432,7 @@ static uint32_t jkk_schedule_get_next_schedule_time_diff(const char *schedule_na
                 }
                 sun = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, false, latitude_e5, longitude_e5);
                 hours = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
+                if(sun > (uint32_t)(12 * 3600) && hours < sun) return sun;
                 return sun > hours ? sun : hours;
             }
         }

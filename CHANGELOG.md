@@ -5,6 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.6] - 2026-05-03
+
+### Fixed
+
+- **Sunrise/sunset schedule could fire twice with a fixed-time boundary** — When a
+  sunrise or sunset schedule had both an astronomical trigger and a fixed boundary
+  time, a post-trigger re-evaluation could incorrectly pick the boundary again later
+  the same day. This happened because the next sun event was already on the next day,
+  while the fixed boundary diff still pointed to "today". The scheduler now skips the
+  same-day boundary once the matching sun event has already passed and correctly waits
+  for the next astronomical event.
+
 ## [1.0.5] - 2026-05-02
 
 ### Added
