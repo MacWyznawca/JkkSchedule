@@ -5,6 +5,21 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.7] - 2026-05-04
+
+### Fixed
+
+- **Sunrise/sunset+boundary schedule fired immediately via missed-schedule detection** —
+  When a schedule had both an astronomical trigger and a fixed-time boundary, two calls
+  to `jkk_schedule_get_next_time_diff()` were made (sun path and boundary path). The
+  second call overwrote `trigger->next_scheduled_time_utc` with the boundary time, even
+  though the scheduler correctly selected the sun time (via MAX/MIN). On the next
+  `jkk_schedule_run_all()` call the stored UTC pointed to the earlier boundary time,
+  making the schedule appear "missed" and fire immediately. Fixed by saving and
+  restoring `next_scheduled_time_utc` to match whichever path (sun or boundary) was
+  actually chosen. Affects all four sun+boundary combinations
+  (`DAYS_OF_WEEK_SUNRISE/SUNSET`, `DATE_SUNRISE/SUNSET`).
+
 ## [1.0.6] - 2026-05-03
 
 ### Fixed

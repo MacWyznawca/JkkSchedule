@@ -389,12 +389,16 @@ static uint32_t jkk_schedule_get_next_schedule_time_diff(const char *schedule_na
                     return jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
                 }
                 sun = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, false, latitude_e5, longitude_e5);
+                time_t sun_utc = trigger->next_scheduled_time_utc;
                 hours = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
+                time_t hours_utc = trigger->next_scheduled_time_utc;
             //    printf("SUNRISE sun < hours: %d Sun: %ld, hours: %ld %s\n", sun < hours, sun, hours, schedule_name);
                 /* If the sun event is more than 12 h away (next day), but the fixed boundary
                  * is sooner (today), skip the boundary — it already fired for today. */
-                if(sun > (uint32_t)(12 * 3600) && hours < sun) return sun;
-                return sun < hours ? sun : hours;
+                if(sun > (uint32_t)(12 * 3600) && hours < sun) { trigger->next_scheduled_time_utc = sun_utc; return sun; }
+                if(sun < hours) { trigger->next_scheduled_time_utc = sun_utc; return sun; }
+                trigger->next_scheduled_time_utc = hours_utc;
+                return hours;
             }
         }
         break;
@@ -404,12 +408,16 @@ static uint32_t jkk_schedule_get_next_schedule_time_diff(const char *schedule_na
                     return jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
                 }
                 sun = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, false, latitude_e5, longitude_e5);
+                time_t sun_utc = trigger->next_scheduled_time_utc;
                 hours = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
+                time_t hours_utc = trigger->next_scheduled_time_utc;
             //    printf("SUNSET sun > hours: %d Sun: %ld, hours: %ld %s\n", sun > hours, sun, hours, schedule_name);
                 /* If the sun event is more than 12 h away (next day), but the fixed boundary
                  * is sooner (today), skip the boundary — it already fired for today. */
-                if(sun > (uint32_t)(12 * 3600) && hours < sun) return sun;
-                return sun > hours ? sun : hours;
+                if(sun > (uint32_t)(12 * 3600) && hours < sun) { trigger->next_scheduled_time_utc = sun_utc; return sun; }
+                if(sun > hours) { trigger->next_scheduled_time_utc = sun_utc; return sun; }
+                trigger->next_scheduled_time_utc = hours_utc;
+                return hours;
             }
         }
         break;
@@ -419,9 +427,13 @@ static uint32_t jkk_schedule_get_next_schedule_time_diff(const char *schedule_na
                     return jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
                 }
                 sun = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, false, latitude_e5, longitude_e5);
+                time_t sun_utc = trigger->next_scheduled_time_utc;
                 hours = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
-                if(sun > (uint32_t)(12 * 3600) && hours < sun) return sun;
-                return sun < hours ? sun : hours;
+                time_t hours_utc = trigger->next_scheduled_time_utc;
+                if(sun > (uint32_t)(12 * 3600) && hours < sun) { trigger->next_scheduled_time_utc = sun_utc; return sun; }
+                if(sun < hours) { trigger->next_scheduled_time_utc = sun_utc; return sun; }
+                trigger->next_scheduled_time_utc = hours_utc;
+                return hours;
             }
         }
         break;
@@ -431,9 +443,13 @@ static uint32_t jkk_schedule_get_next_schedule_time_diff(const char *schedule_na
                     return jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
                 }
                 sun = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, false, latitude_e5, longitude_e5);
+                time_t sun_utc = trigger->next_scheduled_time_utc;
                 hours = jkk_schedule_get_next_time_diff(schedule_name, trigger, current_time, true, latitude_e5, longitude_e5);
-                if(sun > (uint32_t)(12 * 3600) && hours < sun) return sun;
-                return sun > hours ? sun : hours;
+                time_t hours_utc = trigger->next_scheduled_time_utc;
+                if(sun > (uint32_t)(12 * 3600) && hours < sun) { trigger->next_scheduled_time_utc = sun_utc; return sun; }
+                if(sun > hours) { trigger->next_scheduled_time_utc = sun_utc; return sun; }
+                trigger->next_scheduled_time_utc = hours_utc;
+                return hours;
             }
         }
         default:
