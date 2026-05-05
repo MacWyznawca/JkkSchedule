@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.8] - 2026-05-05
+
+### Fixed
+
+- **Sunrise/sunset schedules fired hours late via missed-event detection** — On first
+  time sync (e.g. device booted at 07:38 and received time from hub), `find_missed`
+  looked 24 h back and treated a sunrise event from 05:06 as "missed", firing it
+  immediately at 07:38. Added `JKK_SCHEDULE_MISSED_MAX_AGE_S` (default 1800 s / 30 min):
+  events older than 30 minutes are silently skipped rather than fired immediately.
+  Fixed-time schedules missed by a few minutes (e.g. after a brief reboot) still fire.
+
 ## [1.0.7] - 2026-05-04
 
 ### Fixed
