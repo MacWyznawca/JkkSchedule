@@ -1073,7 +1073,6 @@ esp_err_t jkk_schedule_clean(jkk_schedules_handle_t *schedules_h){
     mktime(&current_time);
 
     jkk_schedule_t *nearestSchedule = NULL;
-
     uint32_t nearestTime = 0;
 
     jkk_schedule_handle_t *handle_list = schedules_h->handle_list;
@@ -1082,6 +1081,56 @@ esp_err_t jkk_schedule_clean(jkk_schedules_handle_t *schedules_h){
             jkk_schedule_t *schedule = (jkk_schedule_t *)handle_list[handle_count];
             if(schedule->trigger.type == JKK_SCHEDULE_TYPE_RELATIVE || schedule->trigger.type == JKK_SCHEDULE_TYPE_INVALID) continue;
 
+            bool is_sun_type = schedule->trigger.type >= JKK_SCHEDULE_TYPE_DAYS_OF_WEEK_SUNRISE &&
+                               schedule->trigger.type <= JKK_SCHEDULE_TYPE_DATE_SUNSET;
+            /* One-time (ONCE) solar schedules fall through to the fixed-time path below. */
+            bool is_repeating_sun = is_sun_type &&
+                !((schedule->trigger.type == JKK_SCHEDULE_TYPE_DAYS_OF_WEEK_SUNRISE ||
+                   schedule->trigger.type == JKK_SCHEDULE_TYPE_DAYS_OF_WEEK_SUNSET) &&
+                  schedule->trigger.day.repeat_days == JKK_SCHEDULE_DAY_ONCE);
+
+            if (is_repeating_sun && jkk_schedule_geo_is_valid(schedules_h->latitude_e5, schedules_h->longitude_e5)) {
+                /* Apply current solar state: compute today's sun time directly from 'now'.
+                 * No age limit — if the sun already rose/set today the schedule is replayed
+                 * regardless of how much time elapsed since the event. */
+                struct tm now_tm;
+                localtime_r(&now, &now_tm);
+
+                /* Verify that the schedule is valid for today (day-of-week / calendar date). */
+                if (schedule->trigger.type == JKK_SCHEDULE_TYPE_DAYS_OF_WEEK_SUNRISE ||
+                    schedule->trigger.type == JKK_SCHEDULE_TYPE_DAYS_OF_WEEK_SUNSET) {
+                    uint8_t today_bit = (now_tm.tm_wday == 0) ? JKK_SCHEDULE_DAY_SUNDAY : (uint8_t)(1 << (now_tm.tm_wday - 1));
+                    if (!(schedule->trigger.day.repeat_days & today_bit)) continue;
+                } else if (schedule->trigger.type == JKK_SCHEDULE_TYPE_DATE_SUNRISE ||
+                           schedule->trigger.type == JKK_SCHEDULE_TYPE_DATE_SUNSET) {
+                    uint16_t month_bit = (uint16_t)(1 << now_tm.tm_mon);
+                    if (now_tm.tm_mday != schedule->trigger.date.day ||
+                        !(month_bit & schedule->trigger.date.repeat_months)) continue;
+                }
+
+                bool is_sunrise_ev = schedule->trigger.type == JKK_SCHEDULE_TYPE_DAYS_OF_WEEK_SUNRISE ||
+                                     schedule->trigger.type == JKK_SCHEDULE_TYPE_DATE_SUNRISE;
+                int16_t sun_min = JkkSuntimeNow(now, is_sunrise_ev,
+                                     schedules_h->latitude_e5 / 100000.0f,
+                                     schedules_h->longitude_e5 / 100000.0f);
+                if (sun_min == INT16_MAX || sun_min == INT16_MIN) continue;
+
+                /* Compute UTC timestamp of today's sun event (local midnight + sun minutes + offset). */
+                now_tm.tm_hour = 0; now_tm.tm_min = 0; now_tm.tm_sec = 0; now_tm.tm_isdst = -1;
+                time_t sun_fire_today = mktime(&now_tm) + (time_t)(sun_min * 60) + (time_t)schedule->trigger.relative_seconds;
+                if (sun_fire_today >= now) continue; /* sun event hasn't occurred yet today */
+
+                uint32_t age_s = (uint32_t)difftime(now, sun_fire_today);
+                uint32_t pseudo_diff = (age_s < (uint32_t)SECONDS_IN_DAY) ? ((uint32_t)SECONDS_IN_DAY - age_s) : 0u;
+                if (pseudo_diff > nearestTime) {
+                    nearestTime = pseudo_diff;
+                    nearestSchedule = schedule;
+                }
+                ESP_LOGW(TAG, "jkk_schedule_find_missed solar: %s, age: %"PRIu32"s, nearestTime: %"PRIu32, schedule->name, age_s, nearestTime);
+                continue;
+            }
+
+            /* Fixed-time schedules (and one-time solar): replay if fired within last 24 h. */
             uint32_t time_diff = jkk_schedule_get_next_schedule_time_diff(schedule->name, &schedule->trigger, &current_time, schedules_h->latitude_e5, schedules_h->longitude_e5);
             if(time_diff < SECONDS_IN_DAY){
                 if(time_diff > nearestTime){
