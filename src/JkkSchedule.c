@@ -30,10 +30,6 @@ static const char *TAG = "JkkSchedule";
 /** Tolerance [s]: fire a schedule if we are within this many seconds *before*
  *  the target time (handles FreeRTOS timer tick rounding). */
 #define JKK_SCHEDULE_TRIGGER_TOLE_S 30u
-/** Missed-schedule window [s]: only fire a "missed" event if it was scheduled
- *  no more than this many seconds ago. Events older than this are silently
- *  skipped (e.g. a sunrise at 05:06 is not fired when time is synced at 07:38). */
-#define JKK_SCHEDULE_MISSED_MAX_AGE_S 1800u
 
 #define SCHEDULE_NVS_NAMESPACE "schd"
 
@@ -1087,10 +1083,7 @@ esp_err_t jkk_schedule_clean(jkk_schedules_handle_t *schedules_h){
             if(schedule->trigger.type == JKK_SCHEDULE_TYPE_RELATIVE || schedule->trigger.type == JKK_SCHEDULE_TYPE_INVALID) continue;
 
             uint32_t time_diff = jkk_schedule_get_next_schedule_time_diff(schedule->name, &schedule->trigger, &current_time, schedules_h->latitude_e5, schedules_h->longitude_e5);
-            /* time_diff is measured from (now - 1 day).  An event that happened T seconds
-             * ago has time_diff = (SECONDS_IN_DAY - T).  We only fire "missed" events that
-             * occurred at most JKK_SCHEDULE_MISSED_MAX_AGE_S seconds in the past. */
-            if(time_diff < SECONDS_IN_DAY && time_diff > (SECONDS_IN_DAY - JKK_SCHEDULE_MISSED_MAX_AGE_S)){
+            if(time_diff < SECONDS_IN_DAY){
                 if(time_diff > nearestTime){
                     nearestTime = time_diff;
                     nearestSchedule = schedule;

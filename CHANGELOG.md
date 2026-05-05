@@ -5,6 +5,16 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [1.0.9] - 2026-05-05
+
+### Fixed
+
+- **Missed-event replay after reboot restored to full 24 h behavior** — The 1.0.8
+  30-minute age cap for missed schedules prevented correct state restoration after
+  longer outages (for example: last schedule was `ON` at 20:00, reboot/time sync at
+  03:00 should still replay that event so the device returns to the expected night
+  state). `find_missed` now again replays the latest valid event from the last 24 h.
+
 ## [1.0.8] - 2026-05-05
 
 ### Fixed
