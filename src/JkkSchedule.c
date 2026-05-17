@@ -52,17 +52,22 @@ int16_t JkkSuntimeAutoZone(time_t timeS, bool sunRise, int16_t day, int16_t mont
 {
     struct tm timeinfo = { 0 };
 
+    ESP_LOGI(TAG, "Calculating sun time with auto timezone, input time: %d", (int)timeS);
+
     if (timeS < (time_t)JKK_ERA) {
         time(&timeS);
+        ESP_LOGI(TAG, "Input time is before 2020, using current time: %d", (int)timeS);
     }
     localtime_r(&timeS, &timeinfo);
+    ESP_LOGI(TAG, "Using time: %d, local time: %02d:%02d:%02d, latitude: %.6f, longitude: %.6f", (int)timeS, timeinfo.tm_hour, timeinfo.tm_min, timeinfo.tm_sec, latitude, longitude);
     int16_t timeZone = (((timeinfo.tm_hour * 60) + (timeinfo.tm_min)) - ((((timeS % (24 * 60 * 60)) / (60 * 60)) * 60) + ((timeS % (60 * 60)) / 60)));
-
+    ESP_LOGI(TAG, "Calculated timezone offset: %d minutes", timeZone);
     return JkkSuntime(timeZone, sunRise, day, month, year, latitude, longitude);
 }
 
 int16_t JkkSuntime(int16_t offset, bool sunRise, int16_t day, int16_t month, int16_t year, float latitude, float longitude)
 {
+    ESP_LOGI(TAG, "Calculating sun time with fixed timezone offset: %d minutes, date: %02d.%02d.%04d, latitude: %.6f, longitude: %.6f, %s", offset, day, month, year, latitude, longitude, sunRise ? "Sunrise" : "Sunset");
     float lngHour, time, m, el, ra, lQuadrant, raQuadrant, sinDec;
     float cosDec, cosH, h, t, ut, localT;
     int16_t n1, n2, n3, n0;
@@ -345,7 +350,7 @@ static uint32_t jkk_schedule_get_next_time_diff(const char *schedule_name, jkk_s
         else {
             schedule_time.tm_sec = 0;
         }
-        ESP_LOGE(TAG, "Sunset: %d, %02d.%02d, %d", sun, sun / 60, sun - ((sun / 60) * 60), trigger->relative_seconds);
+        ESP_LOGE(TAG, "%s: %d, %02d.%02d, %d", trigger->type == JKK_SCHEDULE_TYPE_DAYS_OF_WEEK_SUNRISE || trigger->type == JKK_SCHEDULE_TYPE_DATE_SUNRISE ? "Sunrise" : "Sunset", sun, sun / 60, sun - ((sun / 60) * 60), trigger->relative_seconds);
         /* Compare against effective trigger time (sun ± relative_seconds), not just raw sun time.
          * Without this, a negative relative_seconds offset (e.g. -900 for "15 min before sunrise")
          * would cause a negative time_diff when the schedule is evaluated after the effective trigger

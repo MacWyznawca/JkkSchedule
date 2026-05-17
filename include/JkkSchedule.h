@@ -27,7 +27,7 @@ typedef void *jkk_schedule_handle_t;
 #define JKK_ERA (693792000l + EPOCH_TIMESTAMP)
 
 /** Maximum number of schedules in a single manager handle. */
-#define MAX_SCHEDULE_NUMBER 16
+#define MAX_SCHEDULE_NUMBER 24
 
 /** Maximum schedule name length. This also limits NVS key length. */
 #define MAX_SCHEDULE_NAME_LEN 16
